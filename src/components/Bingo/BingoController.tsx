@@ -14,8 +14,10 @@ import {
     InputLabel,
     Typography,
     Collapse,
+    InputAdornment,
+    Tooltip,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Close, Add, Settings } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 import { useBingoState, useTerms, PageFormats } from "./BingoState";
 import { generateSheets } from "./generateSheets";
@@ -23,6 +25,7 @@ import { createDocument } from "./createDocument";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { getValue } from "@testing-library/user-event/dist/utils";
+import { TermList } from "./TermList";
 
 export const BingoController = (): JSX.Element => {
     const state = useBingoState();
@@ -40,9 +43,9 @@ export const BingoController = (): JSX.Element => {
         }
     }, [state.activeTermSet]);
 
-    const addTerm: React.FormEventHandler<HTMLFormElement> = useCallback(
-        (e) => {
-            e.preventDefault();
+    const addTerm = useCallback(
+        (e?: React.FormEvent<HTMLFormElement>) => {
+            e?.preventDefault();
             if (termField === "") return;
             state.addTerm(termField);
             setTermField("");
@@ -106,6 +109,17 @@ export const BingoController = (): JSX.Element => {
                     value={termField}
                     onChange={(e) => setTermField(e.target.value)}
                     label="Add Term"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <Tooltip title="Add Term">
+                                    <IconButton onClick={() => addTerm()} color="primary">
+                                        <Add />
+                                    </IconButton>
+                                </Tooltip>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
             </form>
             <Divider />
@@ -253,18 +267,33 @@ export const BingoController = (): JSX.Element => {
                     justifyContent: "flex-start",
                     padding: "0 10px",
                 }}
-                onMouseEnter={() => setOpen(true)}
-                onMouseLeave={() => setOpen(false)}
             >
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="success"
-                    onClick={printSheets}
-                    sx={{ margin: "4px" }}
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "row",
+                        py: "4px",
+                    }}
                 >
-                    Generate Sheets
-                </Button>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={printSheets}
+                        sx={{ flexGrow: 1, mr: "4px" }}
+                    >
+                        Generate Sheets
+                    </Button>
+                    <Tooltip title="Sheet Settings">
+                        <IconButton
+                            onClick={() => setOpen((prev) => !prev)}
+                            sx={{ aspectRatio: "1/1" }}
+                        >
+                            <Settings />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+
                 <Collapse in={open}>
                     <TextField
                         label="Bingo Name"
@@ -373,45 +402,7 @@ export const BingoController = (): JSX.Element => {
                 </Button> */}
             </Box>
             <Divider />
-
-            <List
-                dense
-                sx={{
-                    padding: "10px",
-                    minWidth: "0px",
-                    flexGrow: 1,
-                    overflowY: "auto",
-                    li: {
-                        padding: "10px",
-                        borderBottom: "1px solid",
-                        borderColor: "divider",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        "&:first-of-type": {
-                            borderTop: "1px solid",
-                            borderColor: "divider",
-                        },
-                    },
-                }}
-            >
-                <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                    Terms:
-                </Typography>
-                {terms.map((term) => (
-                    <ListItem
-                        title={term}
-                        key={term}
-                        secondaryAction={
-                            <IconButton onClick={() => state.removeTerm(term)} size="small">
-                                <Close />
-                            </IconButton>
-                        }
-                    >
-                        {term}
-                    </ListItem>
-                ))}
-            </List>
+            <TermList terms={terms} removeTerm={state.removeTerm} />
         </Box>
     );
 };

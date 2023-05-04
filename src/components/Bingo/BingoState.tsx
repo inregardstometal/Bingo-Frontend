@@ -292,7 +292,7 @@ export const useTerms = () => {
 
     nullCheck(state);
 
-    return Object.keys(state.terms);
+    return useMemo(() => Object.keys(state.terms), [state.terms]);
 };
 
 export const useFontScale = () => {
