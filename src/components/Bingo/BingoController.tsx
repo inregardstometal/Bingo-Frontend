@@ -16,8 +16,9 @@ import {
     Collapse,
     InputAdornment,
     Tooltip,
+    Input
 } from "@mui/material";
-import { Close, Add, Settings } from "@mui/icons-material";
+import { Close, Add, Settings, FileUploadOutlined } from "@mui/icons-material";
 import { useCallback, useEffect, useState } from "react";
 import { useBingoState, useTerms, PageFormats } from "./BingoState";
 import { generateSheets } from "./generateSheets";
@@ -304,6 +305,14 @@ export const BingoController = (): JSX.Element => {
                         onChange={(e) => state.setName(e.target.value)}
                     />
                     <TextField
+                        label="Subtitle"
+                        margin="dense"
+                        fullWidth
+                        size="small"
+                        value={state.subtitle}
+                        onChange={(e) => state.setSubtitle(e.target.value)}
+                    />
+                    <TextField
                         label="Number of Pages"
                         margin="dense"
                         fullWidth
@@ -391,6 +400,25 @@ export const BingoController = (): JSX.Element => {
                         <MenuItem value="portrait">portrait</MenuItem>
                         <MenuItem value="landscape">landscape</MenuItem>
                     </TextField>
+                    <TextField        
+                        type="text"
+                        size="small"
+                        fullWidth
+                        InputProps={{
+                            endAdornment: (
+                            <IconButton component="label">
+                                <FileUploadOutlined />
+                                <input
+                                style={{display:"none"}}
+                                type="file"
+                                hidden
+                                onChange={(e) => state.setBackgroundImage(URL.createObjectURL(new Blob([...(e.target.files ?? [])])))}
+                                name="file"
+                                />
+                            </IconButton>
+                            ),
+                        }}
+                        />
                 </Collapse>
                 {/* <Button
                     fullWidth

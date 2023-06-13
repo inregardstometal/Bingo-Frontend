@@ -50,12 +50,16 @@ interface BingoState {
     setOrientation: React.Dispatch<React.SetStateAction<"portrait" | "landscape">>;
     name: string;
     setName: React.Dispatch<React.SetStateAction<string>>;
+    subtitle: string;
+    setSubtitle: React.Dispatch<React.SetStateAction<string>>;
     numPerPage: 1 | 2 | 4;
     setNumPerPage: React.Dispatch<React.SetStateAction<2 | 1 | 4>>;
     margin: number;
     setMargin: React.Dispatch<React.SetStateAction<number>>;
     fontScale: number;
     setFontScale: React.Dispatch<React.SetStateAction<number>>;
+    backgroundImage: string | null;
+    setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const BingoContext = createContext<BingoState>(null as unknown as BingoState);
@@ -146,10 +150,12 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [numPerPage, setNumPerPage] = useState<1 | 2 | 4>(1);
     const [name, setName] = useState<string>("");
+    const [subtitle, setSubtitle] = useState<string>("");
     const [format, setFormat] = useState<PageFormats>(PageFormats.Let);
     const [orientation, setOrientation] = useState<"portrait" | "landscape">("portrait");
     const [margin, setMargin] = useState<number>(20);
     const [fontScale, setFontScale] = useState<number>(1);
+    const [backgroundImage, _setBackgroundImage] = useState<string | null>(null);
 
     useEffect(() => {
         setTermSets(getTermSets());
@@ -236,6 +242,19 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
         [terms]
     );
 
+    const setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>> = useCallback((val) => {
+        _setBackgroundImage((prev) => {
+            if (typeof prev === "string") {
+                URL.revokeObjectURL(prev);
+            }
+            if (typeof val === "function") {
+                return val(prev);
+            } else {
+                return val;
+            }
+    })
+    }, [])
+
     const state = {
         terms,
         addTerm,
@@ -262,12 +281,16 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
         setOrientation,
         name,
         setName,
+        subtitle,
+        setSubtitle,
         numPerPage,
         setNumPerPage,
         margin,
         setMargin,
         fontScale,
         setFontScale,
+        backgroundImage,
+        setBackgroundImage
     };
 
     return <BingoContext.Provider value={state}>{children}</BingoContext.Provider>;
@@ -315,8 +338,10 @@ export const useBingoViewState = () => {
         format: state.format,
         orientation: state.orientation,
         name: state.name,
+        subtitle: state.subtitle,
         numPerPage: state.numPerPage,
         margin: state.margin,
+        backgroundImage: state.backgroundImage
     };
 };
 

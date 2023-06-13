@@ -18,7 +18,7 @@ const BONUS_CONTENT = "<b>FREE!</b>";
 
 const _BingoBoard = (): JSX.Element => {
     const terms = useTerms();
-    const { bonus, sideLength, name, margin } = useBingoViewState();
+    const { bonus, sideLength, name, subtitle, margin } = useBingoViewState();
 
     const table = useMemo(() => {
         const area = Math.pow(sideLength, 2);
@@ -47,10 +47,18 @@ const _BingoBoard = (): JSX.Element => {
         <Box sx={{ margin: `${margin}px` }}>
             {name !== "" ? (
                 <Typography
-                    variant="h4"
-                    sx={{ width: "100%", textAlign: "center", margin: "10px 0" }}
+                    variant="h3"
+                    sx={{ width: "100%", textAlign: "center", margin: "10px 0", mb: "16px", fontWeight: 700, fontSize: "32px",  }}
                 >
                     {name}
+                </Typography>
+            ) : null}
+            {subtitle !== "" ? (
+                <Typography
+                    variant="h6"
+                    sx={{ width: "100%", textAlign: "center", margin: "10px 0", px: "80px", fontWeight: 700, fontSize: "10px" }}
+                >
+                    {subtitle}
                 </Typography>
             ) : null}
             <TableContainer

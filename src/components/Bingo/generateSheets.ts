@@ -28,7 +28,7 @@ export const generateSheets = (
                 if (hasFreeSquare && idx === bonusIndex) continue;
                 const span = cell.firstChild as HTMLSpanElement | null;
                 if (span) {
-                    span.innerText = cellValues[idx];
+                    span.innerText = cellValues[idx] ?? "";
                 }
             }
         }
