@@ -19,7 +19,7 @@ import {
     Input
 } from "@mui/material";
 import { Close, Add, Settings, FileUploadOutlined } from "@mui/icons-material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBingoState, useTerms, PageFormats } from "./BingoState";
 import { generateSheets } from "./generateSheets";
 import { createDocument } from "./createDocument";
@@ -33,6 +33,7 @@ export const BingoController = (): JSX.Element => {
     const [termField, setTermField] = useState<string>("");
     const terms = useTerms();
     const [open, setOpen] = useState<boolean>(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const [termSetName, setTermSetName] = useState<string>("");
 
@@ -400,26 +401,32 @@ export const BingoController = (): JSX.Element => {
                         <MenuItem value="portrait">portrait</MenuItem>
                         <MenuItem value="landscape">landscape</MenuItem>
                     </TextField>
-                    <TextField        
+                    <TextField
                         type="text"
                         size="small"
                         label="Background Image"
+                        margin="dense"
                         fullWidth
+                        onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                        InputLabelProps={{ shrink: true }}
+                        value={state.backgroundImage ?? ""}
                         InputProps={{
                             endAdornment: (
-                            <IconButton component="label">
-                                <FileUploadOutlined />
-                                <input
-                                style={{display:"none"}}
-                                type="file"
-                                hidden
-                                onChange={(e) => state.setBackgroundImage(URL.createObjectURL(new Blob([...(e.target.files ?? [])])))}
-                                name="file"
-                                />
-                            </IconButton>
+                                <IconButton component="label" onClick={state.backgroundImage ? (e) => { e.stopPropagation(); e.preventDefault(); state.setBackgroundImage(null); } : undefined}>
+                                    {state.backgroundImage ? <Close /> : <>
+                                        <FileUploadOutlined />
+                                        <input
+                                            ref={fileInputRef}
+                                            style={{ display: "none" }}
+                                            type="file"
+                                            hidden
+                                            onChange={(e) => state.setBackgroundImage(URL.createObjectURL(new Blob([...(e.target.files ?? [])])))}
+                                            name="file"
+                                        /></>}
+                                </IconButton>
                             ),
                         }}
-                        />
+                    />
                 </Collapse>
                 {/* <Button
                     fullWidth
