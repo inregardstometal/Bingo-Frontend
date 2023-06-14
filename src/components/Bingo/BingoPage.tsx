@@ -88,9 +88,7 @@ export const BingoPage = ({}: BingoPageProps): JSX.Element => {
                 ref={containerRef}
                 sx={{
                     bgcolor: "white",
-                    backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
-                    backgroundRepeat: "repeat-x",
-                    backgroundSize: "50%",
+                    
                     width: orientation === "landscape" ? "100%" : "unset",
                     height: orientation === "portrait" ? "100%" : "unset",
                     aspectRatio: `${ratio}`,

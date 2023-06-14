@@ -403,6 +403,7 @@ export const BingoController = (): JSX.Element => {
                     <TextField        
                         type="text"
                         size="small"
+                        label="Background Image"
                         fullWidth
                         InputProps={{
                             endAdornment: (
