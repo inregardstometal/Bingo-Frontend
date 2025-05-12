@@ -208,7 +208,7 @@ export const BingoController = (): React.JSX.Element => {
                     fullWidth
                     SelectProps={{
                         displayEmpty: true,
-                        renderValue: (val) => (val ? <>{val}</> : <i>No Term Set</i>),
+                        renderValue: (val) => (val ? <>{val as string}</> : <i>No Term Set</i>),
                     }}
                     InputProps={{
                         endAdornment: (
