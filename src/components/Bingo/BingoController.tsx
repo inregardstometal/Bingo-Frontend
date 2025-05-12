@@ -28,7 +28,7 @@ import html2canvas from "html2canvas";
 import { getValue } from "@testing-library/user-event/dist/utils";
 import { TermList } from "./TermList";
 
-export const BingoController = (): JSX.Element => {
+export const BingoController = (): React.JSX.Element => {
     const state = useBingoState();
     const [termField, setTermField] = useState<string>("");
     const terms = useTerms();

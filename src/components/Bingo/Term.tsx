@@ -1,7 +1,7 @@
 import { Typography, TypographyProps } from "@mui/material";
 
-const separate = (str: string, filter: string): JSX.Element[] => {
-    const output: JSX.Element[] = [];
+const separate = (str: string, filter: string): React.JSX.Element[] => {
+    const output: React.JSX.Element[] = [];
 
     let matched = "";
     let lastMatchedIndex = 0;
@@ -36,7 +36,7 @@ interface TermProps {
     typographyProps?: TypographyProps;
 }
 
-export const Term = ({ children, filter, typographyProps }: TermProps): JSX.Element => {
+export const Term = ({ children, filter, typographyProps }: TermProps): React.JSX.Element => {
     if (!filter) {
         return <Typography {...typographyProps}>{children}</Typography>;
     } else {

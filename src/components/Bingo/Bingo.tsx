@@ -4,7 +4,7 @@ import { BingoBoard } from "./BingoBoard";
 import { BingoPage } from "./BingoPage";
 import { BingoController } from "./BingoController";
 
-export const Bingo = (): JSX.Element => {
+export const Bingo = (): React.JSX.Element => {
     const key = useKey();
 
     return (

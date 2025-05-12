@@ -16,7 +16,7 @@ const MAX_FONT_SIZE = 28;
 
 const BONUS_CONTENT = "<b>FREE!</b>";
 
-const _BingoBoard = (): JSX.Element => {
+const _BingoBoard = (): React.JSX.Element => {
     const terms = useTerms();
     const { bonus, sideLength, name, subtitle, margin, backgroundImage } = useBingoViewState();
 

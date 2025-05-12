@@ -1,7 +1,7 @@
 import { Bingo } from "./Bingo";
 import { BingoStateProvider } from "./BingoState";
 
-export const BingoWrapper = (): JSX.Element => {
+export const BingoWrapper = (): React.JSX.Element => {
     return (
         <BingoStateProvider>
             <Bingo />

@@ -7,7 +7,7 @@ interface BingoPageProps {}
 
 const SCALE_FACTOR = 0.02;
 
-export const BingoPage = ({}: BingoPageProps): JSX.Element => {
+export const BingoPage = ({}: BingoPageProps): React.JSX.Element => {
     const { containerRef, format, orientation, numPerPage, backgroundImage } = useBingoViewState();
 
     const fontScale = useFontScale();

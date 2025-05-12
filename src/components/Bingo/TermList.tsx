@@ -17,7 +17,7 @@ interface TermListProps {
     removeTerm: (term: string) => void;
 }
 
-export const TermList = ({ terms, removeTerm }: TermListProps): JSX.Element => {
+export const TermList = ({ terms, removeTerm }: TermListProps): React.JSX.Element => {
     const [filterActive, setFilterActive] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>("");
     const [filteredTerms, setFilteredTerms] = useState<string[]>([]);
