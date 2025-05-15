@@ -1,5 +1,5 @@
 export const createDocument = <T extends HTMLElement>(
-    els: T[],
+    elements: T[],
     withStyles: boolean = true
 ): HTMLHtmlElement => {
     //Create the main structural elements of an html document
@@ -14,11 +14,11 @@ export const createDocument = <T extends HTMLElement>(
         );
     }
     //Deep clone the document children to prevent mutation
-    els = els.map((el) => el.cloneNode(true) as T);
+    elements = elements.map((el) => el.cloneNode(true) as T);
 
     //Write both styles and children into their corresponding parents
     head.append(...styles);
-    body.append(...els);
+    body.append(...elements);
 
     //Prevent scrollbar from appearing
     body.style.overflow = "visible";
