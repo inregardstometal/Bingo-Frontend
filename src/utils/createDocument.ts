@@ -7,7 +7,7 @@ export const createDocument = <T extends HTMLElement>(
     const head = document.createElement("head");
     const body = document.createElement("body");
     let styles: Node[] = [];
-    //Rip the styled from the current document and clone them (to prevent mutation)
+    //Rip the styles from the current document and clone them (to prevent mutation)
     if (withStyles) {
         styles = Array.from(document.getElementsByTagName("style")).map((el) =>
             el.cloneNode(true)

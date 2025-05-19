@@ -10,7 +10,7 @@ import {
     Typography,
 } from "@mui/material";
 import { useTerms, useBingoViewState } from "./BingoState";
-import { randomize } from "./randomize";
+import { randomize } from "../../utils/randomize";
 
 const MAX_FONT_SIZE = 28;
 

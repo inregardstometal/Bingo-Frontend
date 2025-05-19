@@ -21,8 +21,8 @@ import {
 import { Close, Add, Settings, FileUploadOutlined } from "@mui/icons-material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useBingoState, useTerms, PageFormats } from "./BingoState";
-import { generateSheets } from "./generateSheets";
-import { createDocument } from "./createDocument";
+import { generateSheets } from "../../utils/generateSheets";
+import { createDocument } from "../../utils/createDocument";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import { getValue } from "@testing-library/user-event/dist/utils";
