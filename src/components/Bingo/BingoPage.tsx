@@ -95,7 +95,7 @@ export const BingoPage = ({}: BingoPageProps): React.JSX.Element => {
                     boxShadow: "3px 3px 7px 0px rgba(0,0,0,0.75)",
                     fontSize: `${fontSize}px`,
                     "*": {
-                        fontFamily: "Century Gothic !important",
+                        fontFamily: "ACTCursive !important",
                     },
                     "@media print": {
                         "&": {

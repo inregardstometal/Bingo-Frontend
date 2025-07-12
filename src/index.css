@@ -28,3 +28,8 @@ code {
   font-family: "Century Gothic";
   src: local("CenturyGothic"), url(./fonts/gothic.woff) format("woff");
 }
+
+@font-face {
+    font-family: "ACTCursive";
+    src: local("ACTCursive"), url(./fonts/EduNSWACTCursive-Regular.ttf) format("truetype");
+}

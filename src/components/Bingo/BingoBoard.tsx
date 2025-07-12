@@ -14,7 +14,7 @@ import { randomize } from "../../utils/randomize";
 
 const MAX_FONT_SIZE = 28;
 
-const BONUS_CONTENT = "<b>FREE!</b>";
+const BONUS_CONTENT = "<b>FREE SPACE</b>";
 
 const _BingoBoard = (): React.JSX.Element => {
     const terms = useTerms();
@@ -63,7 +63,7 @@ const _BingoBoard = (): React.JSX.Element => {
                 {subtitle !== "" ? (
                     <Typography
                         variant="h6"
-                        sx={{ width: "100%", textAlign: "center", margin: "10px 0", px: "80px", fontWeight: 700, fontSize: "10px" }}
+                        sx={{ width: "100%", textAlign: "center", margin: "10px 0", px: "80px", fontWeight: 700, fontSize: "20px" }}
                     >
                         {subtitle}
                     </Typography>
@@ -90,6 +90,7 @@ const _BingoBoard = (): React.JSX.Element => {
                                 width: `${100 / sideLength}%`,
                                 height: `${100 / sideLength}%`,
                                 fontSize: "inherit",
+                                fontWeight: 600
                             },
                         }}
                     >
