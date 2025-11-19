@@ -18,7 +18,16 @@ const BONUS_CONTENT = "<b>FREE SPACE</b>";
 
 const _BingoBoard = (): React.JSX.Element => {
     const terms = useTerms();
-    const { bonus, sideLength, name, subtitle, margin, backgroundImage } = useBingoViewState();
+    const {
+        bonus,
+        sideLength,
+        name,
+        subtitle,
+        margin,
+        backgroundImage,
+        backgroundImageTransparency,
+        stretchToFit,
+    } = useBingoViewState();
 
     const table = useMemo(() => {
         const area = Math.pow(sideLength, 2);
@@ -44,18 +53,31 @@ const _BingoBoard = (): React.JSX.Element => {
     }, [terms, bonus, sideLength]);
 
     return (
-        <Box sx={{
-            backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "100%",
-        }}>
-            <Box sx={{
-                margin: `${margin}px`,
-            }}>
+        <Box
+            sx={{
+                backgroundImage: backgroundImage ? `url(${backgroundImage})` : undefined,
+                backgroundColor: `rgba(255, 255, 255, ${backgroundImageTransparency})`,
+                backgroundBlendMode: "lighten",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: stretchToFit ? "cover" : "100%",
+            }}
+        >
+            <Box
+                sx={{
+                    margin: `${margin}px`,
+                }}
+            >
                 {name !== "" ? (
                     <Typography
                         variant="h3"
-                        sx={{ width: "100%", textAlign: "center", margin: "10px 0", mb: "16px", fontWeight: 700, fontSize: "32px", }}
+                        sx={{
+                            width: "100%",
+                            textAlign: "center",
+                            margin: "10px 0",
+                            mb: "16px",
+                            fontWeight: 700,
+                            fontSize: "32px",
+                        }}
                     >
                         {name}
                     </Typography>
@@ -63,7 +85,14 @@ const _BingoBoard = (): React.JSX.Element => {
                 {subtitle !== "" ? (
                     <Typography
                         variant="h6"
-                        sx={{ width: "100%", textAlign: "center", margin: "10px 0", px: "80px", fontWeight: 700, fontSize: "20px" }}
+                        sx={{
+                            width: "100%",
+                            textAlign: "center",
+                            margin: "10px 0",
+                            px: "80px",
+                            fontWeight: 700,
+                            fontSize: "20px",
+                        }}
                     >
                         {subtitle}
                     </Typography>
@@ -90,7 +119,7 @@ const _BingoBoard = (): React.JSX.Element => {
                                 width: `${100 / sideLength}%`,
                                 height: `${100 / sideLength}%`,
                                 fontSize: "inherit",
-                                fontWeight: 600
+                                fontWeight: 600,
                             },
                         }}
                     >

@@ -60,6 +60,10 @@ interface BingoState {
     setFontScale: React.Dispatch<React.SetStateAction<number>>;
     backgroundImage: string | null;
     setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>>;
+    backgroundImageTransparency: number;
+    setBackgroundImageTransparency: React.Dispatch<React.SetStateAction<number>>;
+    stretchToFit: boolean;
+    setStretchToFit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BingoContext = createContext<BingoState>(null as unknown as BingoState);
@@ -156,6 +160,8 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
     const [margin, setMargin] = useState<number>(20);
     const [fontScale, setFontScale] = useState<number>(1);
     const [backgroundImage, _setBackgroundImage] = useState<string | null>(null);
+    const [backgroundImageTransparency, setBackgroundImageTransparency] = useState<number>(0);
+    const [stretchToFit, setStretchToFit] = useState<boolean>(false);
 
     useEffect(() => {
         setTermSets(getTermSets());
@@ -242,18 +248,19 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
         [terms]
     );
 
-    const setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>> = useCallback((val) => {
-        _setBackgroundImage((prev) => {
-            if (typeof prev === "string") {
-                URL.revokeObjectURL(prev);
-            }
-            if (typeof val === "function") {
-                return val(prev);
-            } else {
-                return val;
-            }
-    })
-    }, [])
+    const setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>> =
+        useCallback((val) => {
+            _setBackgroundImage((prev) => {
+                if (typeof prev === "string") {
+                    URL.revokeObjectURL(prev);
+                }
+                if (typeof val === "function") {
+                    return val(prev);
+                } else {
+                    return val;
+                }
+            });
+        }, []);
 
     const state = {
         terms,
@@ -290,7 +297,11 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
         fontScale,
         setFontScale,
         backgroundImage,
-        setBackgroundImage
+        setBackgroundImage,
+        backgroundImageTransparency,
+        setBackgroundImageTransparency,
+        stretchToFit,
+        setStretchToFit,
     };
 
     return <BingoContext.Provider value={state}>{children}</BingoContext.Provider>;
@@ -341,7 +352,9 @@ export const useBingoViewState = () => {
         subtitle: state.subtitle,
         numPerPage: state.numPerPage,
         margin: state.margin,
-        backgroundImage: state.backgroundImage
+        backgroundImage: state.backgroundImage,
+        backgroundImageTransparency: state.backgroundImageTransparency,
+        stretchToFit: state.stretchToFit,
     };
 };
 

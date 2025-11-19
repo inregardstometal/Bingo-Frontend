@@ -16,7 +16,8 @@ import {
     Collapse,
     InputAdornment,
     Tooltip,
-    Input
+    Input,
+    Switch
 } from "@mui/material";
 import { Close, Add, Settings, FileUploadOutlined } from "@mui/icons-material";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -427,6 +428,21 @@ export const BingoController = (): React.JSX.Element => {
                             ),
                         }}
                     />
+                    <Typography
+                        sx={{ color: "text.secondary", width: "100%", padding: "0 14px" }}
+                        variant="caption"
+                    >
+                        Background Image Transparency
+                    </Typography>
+                    <Slider
+                        sx={{ width: "90%" }}
+                        value={state.backgroundImageTransparency}
+                        onChange={(e, v) => state.setBackgroundImageTransparency(v as number)}
+                        min={0}
+                        max={1}
+                        step={0.05}
+                    />
+                    <FormControlLabel control={<Switch value={state.stretchToFit} onChange={() => state.setStretchToFit((prev) => !prev)}/>} label="Stretch To Fit"/>
                 </Collapse>
                 {/* <Button
                     fullWidth
