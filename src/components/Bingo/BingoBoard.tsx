@@ -12,6 +12,8 @@ import {
 import { useTerms, useBingoViewState } from "./BingoState";
 import { randomize } from "../../utils/randomize";
 
+const SCALE_FACTOR = 0.02;
+
 const MAX_FONT_SIZE = 28;
 
 const BONUS_CONTENT = "<b>FREE SPACE</b>";
@@ -27,6 +29,8 @@ const _BingoBoard = (): React.JSX.Element => {
         backgroundImage,
         backgroundImageTransparency,
         stretchToFit,
+        fontScale,
+        numPerPage,
     } = useBingoViewState();
 
     const table = useMemo(() => {
@@ -51,6 +55,46 @@ const _BingoBoard = (): React.JSX.Element => {
 
         return _table;
     }, [terms, bonus, sideLength]);
+
+    const tableRef = useRef<HTMLTableElement | null>(null);
+
+    const [dim, setDim] = useState<[number, number] | null>(null);
+
+    useEffect(() => {
+        if (tableRef.current) {
+            const ob = new ResizeObserver(() => {
+                if (tableRef.current) {
+                    setDim([
+                        tableRef.current.clientWidth,
+                        tableRef.current.clientHeight,
+                    ]);
+                }
+            });
+
+            ob.observe(tableRef.current);
+
+            return () => {
+                ob.disconnect();
+            };
+        }
+    }, []);
+
+
+    const fontSize = useMemo(() => {
+            if (dim) {
+                const min = Math.min(dim[0], dim[1]);
+    
+                const baseSize = (min * SCALE_FACTOR) / Math.sqrt(numPerPage);
+    
+                if (fontScale && !isNaN(fontScale)) {
+                    return Math.round(baseSize * fontScale);
+                } else {
+                    return Math.round(baseSize);
+                }
+            } else {
+                return 16;
+            }
+        }, [dim, numPerPage, fontScale]);
 
     return (
         <Box
@@ -104,6 +148,7 @@ const _BingoBoard = (): React.JSX.Element => {
                     }}
                 >
                     <Table
+                        ref={tableRef}
                         sx={{
                             tableLayout: "fixed",
                             maxHeight: "100%",
@@ -118,7 +163,6 @@ const _BingoBoard = (): React.JSX.Element => {
                                 borderColor: "black",
                                 width: `${100 / sideLength}%`,
                                 height: `${100 / sideLength}%`,
-                                fontSize: "inherit",
                                 fontWeight: 600,
                             },
                         }}
@@ -131,10 +175,12 @@ const _BingoBoard = (): React.JSX.Element => {
                                             <Box
                                                 component="span"
                                                 sx={{
+                                                    fontSize: `${fontSize}px`,
                                                     position: "absolute",
                                                     top: "50%",
                                                     left: "50%",
                                                     transform: "translate(-50%, -50%)",
+                                                    fontWeight: 700,
                                                 }}
                                                 dangerouslySetInnerHTML={
                                                     cell === BONUS_CONTENT

@@ -8,7 +8,8 @@ interface BingoPageProps {}
 const SCALE_FACTOR = 0.02;
 
 export const BingoPage = ({}: BingoPageProps): React.JSX.Element => {
-    const { containerRef, format, orientation, numPerPage, backgroundImage } = useBingoViewState();
+    const { containerRef, format, orientation, numPerPage, backgroundImage } =
+        useBingoViewState();
 
     const fontScale = useFontScale();
 
@@ -88,12 +89,12 @@ export const BingoPage = ({}: BingoPageProps): React.JSX.Element => {
                 ref={containerRef}
                 sx={{
                     bgcolor: "white",
-                    
+
                     width: orientation === "landscape" ? "100%" : "unset",
                     height: orientation === "portrait" ? "100%" : "unset",
                     aspectRatio: `${ratio}`,
                     boxShadow: "3px 3px 7px 0px rgba(0,0,0,0.75)",
-                    fontSize: `${fontSize}px`,
+                    // fontSize: `${fontSize}px`,
                     "*": {
                         fontFamily: "ACTCursive !important",
                     },

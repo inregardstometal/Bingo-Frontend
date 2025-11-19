@@ -24,49 +24,54 @@ export const FormatRatios: Record<PageFormats, [number, number]> = {
     [PageFormats.A4]: [1, 1.414],
 };
 
-interface BingoState {
-    terms: Record<string, true>;
+interface BingoMethods {
     addTerm: (term: string) => void;
     removeTerm: (term: string) => void;
     clearTerms: () => void;
-    errors: Error[];
     pushError: (error: Error) => void;
     popError: (error: Error) => void;
     clearErrors: () => void;
-    bonus: boolean;
     setBonus: (val: boolean) => void;
-    sideLength: number;
     setSideLength: (val: number) => void;
-    key: string;
     regenerate: () => void;
-    termSets: string[];
-    activeTermSet: string | null;
     setTermSet: (name: string | null) => void;
     writeTerms: (termSetName: string) => void;
-    containerRef: React.MutableRefObject<HTMLDivElement | null>;
-    format: PageFormats;
     setFormat: React.Dispatch<React.SetStateAction<PageFormats>>;
-    orientation: "portrait" | "landscape";
     setOrientation: React.Dispatch<React.SetStateAction<"portrait" | "landscape">>;
-    name: string;
     setName: React.Dispatch<React.SetStateAction<string>>;
-    subtitle: string;
     setSubtitle: React.Dispatch<React.SetStateAction<string>>;
-    numPerPage: 1 | 2 | 4;
     setNumPerPage: React.Dispatch<React.SetStateAction<2 | 1 | 4>>;
-    margin: number;
     setMargin: React.Dispatch<React.SetStateAction<number>>;
-    fontScale: number;
     setFontScale: React.Dispatch<React.SetStateAction<number>>;
-    backgroundImage: string | null;
     setBackgroundImage: React.Dispatch<React.SetStateAction<string | null>>;
-    backgroundImageTransparency: number;
     setBackgroundImageTransparency: React.Dispatch<React.SetStateAction<number>>;
-    stretchToFit: boolean;
     setStretchToFit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const BingoContext = createContext<BingoState>(null as unknown as BingoState);
+interface BingoState {
+    terms: Record<string, true>;
+    errors: Error[];
+    bonus: boolean;
+    sideLength: number;
+    key: string;
+    termSets: string[];
+    activeTermSet: string | null;
+    containerRef: React.MutableRefObject<HTMLDivElement | null>;
+    format: PageFormats;
+    orientation: "portrait" | "landscape";
+    name: string;
+    subtitle: string;
+    numPerPage: 1 | 2 | 4;
+    margin: number;
+    fontScale: number;
+    backgroundImage: string | null;
+    backgroundImageTransparency: number;
+    stretchToFit: boolean;
+}
+
+type Bingo = { state: BingoState; methods: BingoMethods };
+
+const BingoContext = createContext<Bingo>(null as unknown as Bingo);
 
 interface BingoStateProviderProps {
     children: React.ReactNode | Iterable<React.ReactNode>;
@@ -80,6 +85,64 @@ const TERM_STORAGE_KEY = "TERMS";
 type StoredTerms = {
     [termSetName: string]: string[];
 };
+
+const STATE_STORAGE_KEY = "STATE";
+
+type StoredState = {
+    [stateName: string]: BingoState;
+};
+
+const storeState = (stateName: string, state: BingoState): void => {
+    const storedState = localStorage.getItem(STATE_STORAGE_KEY);
+
+    let stateRecord: StoredState = {};
+
+    if (storedState) {
+        stateRecord = JSON.parse(storedState);
+    }
+
+    stateRecord[stateName] = state;
+
+    localStorage.setItem(TERM_STORAGE_KEY, JSON.stringify(stateRecord));
+};
+
+const getState = (stateName: string): BingoState => {
+    const state = localStorage.getItem(STATE_STORAGE_KEY);
+
+    if (!state) {
+        throw new Error("state was not defined");
+    }
+
+    const stateRecord = JSON.parse(state) as StoredState;
+
+    const targetState = stateRecord[stateName];
+
+    if (!targetState) {
+        throw new Error(`Couldn't find state with name ${stateName}`);
+    }
+
+    return targetState;
+};
+
+const getStates = () => {
+    let states: string[] = [];
+
+    try {
+        const storedStates = localStorage.getItem(STATE_STORAGE_KEY);
+
+        if (!storedStates) {
+            return states;
+        }
+
+        const StateRecord = JSON.parse(storedStates) as StoredState;
+
+        states = Object.keys(StateRecord);
+    } catch (err) {
+        console.error(err);
+    }
+
+    return states;
+}
 
 const storeTerms = (termSetName: string, terms: Record<string, true>): void => {
     const storedTerms = localStorage.getItem(TERM_STORAGE_KEY);
@@ -150,7 +213,9 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
     const [errors, setErrors] = useState<Error[]>([]);
     const [key, setKey] = useState<string>(v4());
     const [termSets, setTermSets] = useState<string[]>([]);
+    const [states, setStates] = useState<string[]>([]);
     const [activeTermSet, setActiveTermSet] = useState<string | null>(null);
+    const [activeState, setActiveState] = useState<string | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [numPerPage, setNumPerPage] = useState<1 | 2 | 4>(1);
     const [name, setName] = useState<string>("");
@@ -165,8 +230,12 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
 
     useEffect(() => {
         setTermSets(getTermSets());
+        setStates(getStates());
         if (activeTermSet) {
             setTerms(getTerms(activeTermSet));
+        }
+        if(activeState) {
+            //rehydrate state
         }
     }, [activeTermSet]);
 
@@ -264,104 +333,106 @@ export const BingoStateProvider = ({ children }: BingoStateProviderProps) => {
 
     const state = {
         terms,
+        errors,
+        bonus,
+        sideLength,
+        key,
+        termSets,
+        activeTermSet,
+        containerRef,
+        format,
+        orientation,
+        name,
+        subtitle,
+        numPerPage,
+        margin,
+        fontScale,
+        backgroundImage,
+        backgroundImageTransparency,
+        stretchToFit,
+    };
+
+    const methods = {
         addTerm,
         removeTerm,
         clearTerms,
-        errors,
         pushError,
         popError,
         clearErrors,
-        bonus,
         setBonus,
-        sideLength,
         setSideLength,
-        key,
         regenerate,
-        termSets,
-        activeTermSet,
         setTermSet,
         writeTerms,
-        containerRef,
-        format,
         setFormat,
-        orientation,
         setOrientation,
-        name,
         setName,
-        subtitle,
         setSubtitle,
-        numPerPage,
         setNumPerPage,
-        margin,
         setMargin,
-        fontScale,
         setFontScale,
-        backgroundImage,
         setBackgroundImage,
-        backgroundImageTransparency,
         setBackgroundImageTransparency,
-        stretchToFit,
         setStretchToFit,
     };
 
-    return <BingoContext.Provider value={state}>{children}</BingoContext.Provider>;
+    const writeState = useCallback(
+        (stateName: string) => {
+            storeState(stateName, state);
+        },
+        [state]
+    );
+
+    const bingo: Bingo = {
+        state,
+        methods,
+    };
+
+    return <BingoContext.Provider value={bingo}>{children}</BingoContext.Provider>;
 };
 
-const nullCheck = (state: BingoState) => {
+const nullCheck = (state: Bingo) => {
     if (!state) {
         throw new Error("BingoContext was null!");
     }
 };
 
 export const useKey = () => {
-    const state = useContext(BingoContext);
+    const bingo = useContext(BingoContext);
 
-    nullCheck(state);
+    nullCheck(bingo);
 
-    return state.key;
+    return bingo.state.key;
 };
 
 export const useTerms = () => {
-    const state = useContext(BingoContext);
+    const bingo = useContext(BingoContext);
 
-    nullCheck(state);
+    nullCheck(bingo);
 
-    return useMemo(() => Object.keys(state.terms), [state.terms]);
+    return useMemo(() => Object.keys(bingo.state.terms), [bingo.state.terms]);
 };
 
 export const useFontScale = () => {
-    const state = useContext(BingoContext);
+    const bingo = useContext(BingoContext);
 
-    nullCheck(state);
+    nullCheck(bingo);
 
-    return state.fontScale;
+    return bingo.state.fontScale;
 };
 
 export const useBingoViewState = () => {
-    const state = useContext(BingoContext);
+    const bingo = useContext(BingoContext);
 
-    nullCheck(state);
+    nullCheck(bingo);
 
-    return {
-        bonus: state.bonus,
-        sideLength: state.sideLength,
-        containerRef: state.containerRef,
-        format: state.format,
-        orientation: state.orientation,
-        name: state.name,
-        subtitle: state.subtitle,
-        numPerPage: state.numPerPage,
-        margin: state.margin,
-        backgroundImage: state.backgroundImage,
-        backgroundImageTransparency: state.backgroundImageTransparency,
-        stretchToFit: state.stretchToFit,
-    };
+    return bingo.state;
 };
 
 export const useBingoState = () => {
-    const state = useContext(BingoContext);
+    const bingo = useContext(BingoContext);
 
-    nullCheck(state);
+    nullCheck(bingo);
 
-    return state;
+    return bingo;
 };

@@ -30,7 +30,7 @@ import { getValue } from "@testing-library/user-event/dist/utils";
 import { TermList } from "./TermList";
 
 export const BingoController = (): React.JSX.Element => {
-    const state = useBingoState();
+    const bingo = useBingoState();
     const [termField, setTermField] = useState<string>("");
     const terms = useTerms();
     const [open, setOpen] = useState<boolean>(false);
@@ -41,22 +41,22 @@ export const BingoController = (): React.JSX.Element => {
     const [numberOfSheets, setNumberOfSheets] = useState<number>(5);
 
     useEffect(() => {
-        if (state.activeTermSet) {
-            setTermSetName(state.activeTermSet);
+        if (bingo.state.activeTermSet) {
+            setTermSetName(bingo.state.activeTermSet);
         }
-    }, [state.activeTermSet]);
+    }, [bingo.state.activeTermSet]);
 
     const addTerm = useCallback(
         (e?: React.FormEvent<HTMLFormElement>) => {
             e?.preventDefault();
             if (termField === "") return;
-            state.addTerm(termField);
+            bingo.methods.addTerm(termField);
             setTermField("");
         },
-        [termField, state]
+        [termField, bingo.methods.addTerm]
     );
 
-    const { containerRef, bonus } = state;
+    const { containerRef, bonus } = bingo.state;
 
     const printSheets = useCallback(async () => {
         const container = containerRef.current;
@@ -139,8 +139,8 @@ export const BingoController = (): React.JSX.Element => {
                 <FormControlLabel
                     control={
                         <Checkbox
-                            checked={state.bonus}
-                            onChange={() => state.setBonus(!state.bonus)}
+                            checked={bingo.state.bonus}
+                            onChange={() => bingo.methods.setBonus(!bingo.state.bonus)}
                         />
                     }
                     label="Bonus Square"
@@ -150,8 +150,8 @@ export const BingoController = (): React.JSX.Element => {
                     select
                     size="small"
                     label="Squares per side"
-                    value={state.sideLength}
-                    onChange={(e) => state.setSideLength(+e.target.value)}
+                    value={bingo.state.sideLength}
+                    onChange={(e) => bingo.methods.setSideLength(+e.target.value)}
                 >
                     <MenuItem value={3}>3</MenuItem>
                     <MenuItem value={5}>5</MenuItem>
@@ -172,14 +172,14 @@ export const BingoController = (): React.JSX.Element => {
                     padding: "10px",
                 }}
             >
-                <Button variant="contained" onClick={state.regenerate}>
+                <Button variant="contained" onClick={bingo.methods.regenerate}>
                     Refresh Board
                 </Button>
                 <Button
                     variant="contained"
                     onClick={() => {
-                        state.clearTerms();
-                        state.setTermSet(null);
+                        bingo.methods.clearTerms();
+                        bingo.methods.setTermSet(null);
                     }}
                     color="error"
                 >
@@ -201,9 +201,9 @@ export const BingoController = (): React.JSX.Element => {
                 <TextField
                     select
                     size="small"
-                    value={state.activeTermSet ?? ""}
+                    value={bingo.state.activeTermSet ?? ""}
                     onChange={(e) =>
-                        state.setTermSet(e.target.value === "" ? null : e.target.value)
+                        bingo.methods.setTermSet(e.target.value === "" ? null : e.target.value)
                     }
                     label="Term Set"
                     fullWidth
@@ -215,8 +215,8 @@ export const BingoController = (): React.JSX.Element => {
                         endAdornment: (
                             <IconButton
                                 onClick={() => {
-                                    state.clearTerms();
-                                    state.setTermSet(null);
+                                    bingo.methods.clearTerms();
+                                    bingo.methods.setTermSet(null);
                                 }}
                                 size="small"
                                 sx={{ marginRight: "10px" }}
@@ -227,7 +227,7 @@ export const BingoController = (): React.JSX.Element => {
                     }}
                     InputLabelProps={{ shrink: true }}
                 >
-                    {state.termSets.map((set) => (
+                    {bingo.state.termSets.map((set) => (
                         <MenuItem key={set} value={set}>
                             {set}
                         </MenuItem>
@@ -247,7 +247,7 @@ export const BingoController = (): React.JSX.Element => {
             >
                 <Button
                     variant="contained"
-                    onClick={() => state.writeTerms(termSetName)}
+                    onClick={() => bingo.methods.writeTerms(termSetName)}
                     sx={{ marginRight: "5px" }}
                 >
                     Save
@@ -303,16 +303,16 @@ export const BingoController = (): React.JSX.Element => {
                         margin="dense"
                         fullWidth
                         size="small"
-                        value={state.name}
-                        onChange={(e) => state.setName(e.target.value)}
+                        value={bingo.state.name}
+                        onChange={(e) => bingo.methods.setName(e.target.value)}
                     />
                     <TextField
                         label="Subtitle"
                         margin="dense"
                         fullWidth
                         size="small"
-                        value={state.subtitle}
-                        onChange={(e) => state.setSubtitle(e.target.value)}
+                        value={bingo.state.subtitle}
+                        onChange={(e) => bingo.methods.setSubtitle(e.target.value)}
                     />
                     <TextField
                         label="Number of Pages"
@@ -333,9 +333,9 @@ export const BingoController = (): React.JSX.Element => {
                         label="Margin"
                         margin="dense"
                         size="small"
-                        value={state.margin}
+                        value={bingo.state.margin}
                         onChange={(e) =>
-                            state.setMargin(isNaN(+e.target.value) ? 0 : +e.target.value)
+                            bingo.methods.setMargin(isNaN(+e.target.value) ? 0 : +e.target.value)
                         }
                         InputProps={{ endAdornment: "px" }}
                         inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -348,8 +348,8 @@ export const BingoController = (): React.JSX.Element => {
                     </Typography>
                     <Slider
                         sx={{ width: "90%" }}
-                        value={state.fontScale}
-                        onChange={(e, v) => state.setFontScale(v as number)}
+                        value={bingo.state.fontScale}
+                        onChange={(e, v) => bingo.methods.setFontScale(v as number)}
                         min={0.1}
                         max={4}
                         step={0.1}
@@ -360,16 +360,16 @@ export const BingoController = (): React.JSX.Element => {
                         margin="dense"
                         fullWidth
                         size="small"
-                        value={state.numPerPage}
-                        onChange={(e) => state.setNumPerPage(+e.target.value as 1 | 2 | 4)}
+                        value={bingo.state.numPerPage}
+                        onChange={(e) => bingo.methods.setNumPerPage(+e.target.value as 1 | 2 | 4)}
                     >
-                        <MenuItem value={1} disabled={state.orientation === "landscape"}>
+                        <MenuItem value={1} disabled={bingo.state.orientation === "landscape"}>
                             1
                         </MenuItem>
-                        <MenuItem value={2} disabled={state.orientation === "portrait"}>
+                        <MenuItem value={2} disabled={bingo.state.orientation === "portrait"}>
                             2
                         </MenuItem>
-                        <MenuItem value={4} disabled={state.orientation === "landscape"}>
+                        <MenuItem value={4} disabled={bingo.state.orientation === "landscape"}>
                             4
                         </MenuItem>
                     </TextField>
@@ -379,8 +379,8 @@ export const BingoController = (): React.JSX.Element => {
                         margin="dense"
                         fullWidth
                         size="small"
-                        value={state.format}
-                        onChange={(e) => state.setFormat(e.target.value as PageFormats)}
+                        value={bingo.state.format}
+                        onChange={(e) => bingo.methods.setFormat(e.target.value as PageFormats)}
                     >
                         {Object.entries(PageFormats).map(([key, value]) => (
                             <MenuItem key={value} value={value}>
@@ -394,9 +394,9 @@ export const BingoController = (): React.JSX.Element => {
                         margin="dense"
                         fullWidth
                         size="small"
-                        value={state.orientation}
+                        value={bingo.state.orientation}
                         onChange={(e) =>
-                            state.setOrientation(e.target.value as typeof state.orientation)
+                            bingo.methods.setOrientation(e.target.value as typeof bingo.state.orientation)
                         }
                     >
                         <MenuItem value="portrait">portrait</MenuItem>
@@ -410,18 +410,18 @@ export const BingoController = (): React.JSX.Element => {
                         fullWidth
                         onClick={() => fileInputRef.current && fileInputRef.current.click()}
                         InputLabelProps={{ shrink: true }}
-                        value={state.backgroundImage ?? ""}
+                        value={bingo.state.backgroundImage ?? ""}
                         InputProps={{
                             endAdornment: (
-                                <IconButton component="label" onClick={state.backgroundImage ? (e) => { e.stopPropagation(); e.preventDefault(); state.setBackgroundImage(null); } : undefined}>
-                                    {state.backgroundImage ? <Close /> : <>
+                                <IconButton component="label" onClick={bingo.state.backgroundImage ? (e) => { e.stopPropagation(); e.preventDefault(); bingo.methods.setBackgroundImage(null); } : undefined}>
+                                    {bingo.state.backgroundImage ? <Close /> : <>
                                         <FileUploadOutlined />
                                         <input
                                             ref={fileInputRef}
                                             style={{ display: "none" }}
                                             type="file"
                                             hidden
-                                            onChange={(e) => state.setBackgroundImage(URL.createObjectURL(new Blob([...(e.target.files ?? [])])))}
+                                            onChange={(e) => bingo.methods.setBackgroundImage(URL.createObjectURL(new Blob([...(e.target.files ?? [])])))}
                                             name="file"
                                         /></>}
                                 </IconButton>
@@ -436,13 +436,13 @@ export const BingoController = (): React.JSX.Element => {
                     </Typography>
                     <Slider
                         sx={{ width: "90%" }}
-                        value={state.backgroundImageTransparency}
-                        onChange={(e, v) => state.setBackgroundImageTransparency(v as number)}
+                        value={bingo.state.backgroundImageTransparency}
+                        onChange={(e, v) => bingo.methods.setBackgroundImageTransparency(v as number)}
                         min={0}
                         max={1}
                         step={0.05}
                     />
-                    <FormControlLabel control={<Switch value={state.stretchToFit} onChange={() => state.setStretchToFit((prev) => !prev)}/>} label="Stretch To Fit"/>
+                    <FormControlLabel control={<Switch value={bingo.state.stretchToFit} onChange={() => bingo.methods.setStretchToFit((prev) => !prev)}/>} label="Stretch To Fit"/>
                 </Collapse>
                 {/* <Button
                     fullWidth
@@ -454,7 +454,7 @@ export const BingoController = (): React.JSX.Element => {
                 </Button> */}
             </Box>
             <Divider />
-            <TermList terms={terms} removeTerm={state.removeTerm} />
+            <TermList terms={terms} removeTerm={bingo.methods.removeTerm} />
         </Box>
     );
 };
